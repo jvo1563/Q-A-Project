@@ -1,0 +1,130 @@
+[[extend 'layout.html']]
+
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<div class="section" id="vue-target" v-cloak>
+  <!-- Put here your Vue.js template -->
+  <div class="container block">
+    <h1 class="title">AskAnything</h1>
+    <div class="pb-4">
+      <a class="button is-primary" href="[[=URL('add_post')]]">
+        <span>Ask a question!</span>
+      </a>
+    </div>
+
+    <div class="tile is-12 is-vertical">
+      <div v-for="r in rows.slice().reverse()" class="block">
+        <div
+          class="tile is-vertical has-background-grey-lighter notification py-3"
+        >
+          <div class="content has-text-weight-bold pt-2 pl-2 mb-2">
+            {{r.title}}
+          </div>
+          <div class="content pl-2 mb-2">Posted by: {{r.name}}</div>
+          <div class="content pl-2 mb-2">Category: {{r.category}}</div>
+          <div class="content pl-2 mb-2">Time asked: {{r.time_asked}}</div>
+          <div class="tile pb-3 is-full is-mobile">
+            <!-- The get_likers() function below will only call the controller the first time.
+              Afterwards it will just show the list of likers stored locally. -->
+            <div
+              @mouseenter="get_likers(r._idx)"
+              @mouseleave="set_liker_status(r._idx, false)"
+              class="tile pl-2 is-1"
+            >
+              <div v-if="r.rating === 0" class="container block">
+                <span>
+                  <i
+                    @click="set_rating(r._idx, 1)"
+                    class="
+                      fa fa-thumbs-o-up fa-2x
+                      has-text-info
+                      level-item
+                      fa-flip-horizontal
+                    "
+                  ></i>
+                  <div class="content has-text-info pt-2">{{r.likers}}</div>
+                  <i
+                    @click="set_rating(r._idx, -1)"
+                    class="fa fa-thumbs-o-down fa-2x has-text-info level-item"
+                  ></i
+                ></span>
+              </div>
+              <div v-if="r.rating === 1" class="container block">
+                <span>
+                  <i
+                    @click="set_rating(r._idx, 0)"
+                    class="
+                      fa fa-thumbs-up fa-2x
+                      has-text-info
+                      level-item
+                      fa-flip-horizontal
+                    "
+                  ></i>
+                  <div class="content has-text-info pt-2">{{r.likers}}</div>
+                  <i
+                    @click="set_rating(r._idx, -1)"
+                    class="fa fa-thumbs-o-down fa-2x has-text-info level-item"
+                  ></i
+                ></span>
+              </div>
+              <div v-if="r.rating === -1" class="container block">
+                <span>
+                  <i
+                    @click="set_rating(r._idx, 1)"
+                    class="
+                      fa fa-thumbs-o-up fa-2x
+                      has-text-info
+                      level-item
+                      fa-flip-horizontal
+                    "
+                  ></i>
+                  <div class="content has-text-info pt-2">{{r.likers}}</div>
+                  <i
+                    @click="set_rating(r._idx, 0)"
+                    class="fa fa-thumbs-down fa-2x has-text-info level-item"
+                  ></i
+                ></span>
+              </div>
+            </div>
+            <!-- <div class="tile is-8">
+              <div class="content has-text-info pt-2">{{r.likers}}</div>
+            </div> -->
+            <div class="tile pr-5 level-right">
+              <span
+                v-if="r.user_email === current_user"
+                @click="delete_post(r._idx)"
+                class="icon has-text-danger"
+              >
+                <i class="fa fa-trash fa-2x"></i>
+              </span>
+
+              <span>
+                <a class="button is-success" v-bind:href="'/qa/post/'+ r.id">
+                  <i class="fa fa-caret-square-o-right"></i>
+                  <span>View</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let load_posts_url = "[[=XML(load_posts_url)]]";
+  let add_post_url = "[[=XML(add_post_url)]]";
+  let delete_post_url = "[[=XML(delete_post_url)]]";
+  let get_rating_url = "[[=XML(get_rating_url)]]";
+  let set_rating_url = "[[=XML(set_rating_url)]]";
+  let get_likers_url = "[[=XML(get_likers_url)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]
