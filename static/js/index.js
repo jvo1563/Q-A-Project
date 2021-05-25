@@ -26,30 +26,10 @@ let init = (app) => {
     posts.map((post) => {
       post.rating = 0;
       post.show_likers = false;
-      post.likers = "";
+      post.final = 0;
       post.first_load_for_like = false;
     });
   };
-
-  // app.add_post = function () {
-  //   axios
-  //     .post(add_post_url, {
-  //       content: app.vue.add_content,
-  //     })
-  //     .then(function (response) {
-  //       app.vue.rows.push({
-  //         id: response.data.id,
-  //         content: app.vue.add_content,
-  //         name: response.data.name,
-  //         user_email: response.data.user_email,
-  //         rating: 0,
-  //         show_likers: false,
-  //         likers: "",
-  //         first_load_for_like: false,
-  //       });
-  //       app.enumerate(app.vue.rows);
-  //     });
-  // };
 
   app.delete_post = function (row_idx) {
     let id = app.vue.rows[row_idx].id;
@@ -69,34 +49,15 @@ let init = (app) => {
   app.set_rating = (row_idx, rating) => {
     let post = app.vue.rows[row_idx];
     post.rating = rating;
-    axios.post(set_rating_url, { post_id: post.id, rating: rating });
     axios
-      .get(get_likers_url, { params: { post_id: post.id } })
-      .then((result) => {
-        post.likers = result.data.likers;
+      .post(set_rating_url, { post_id: post.id, rating: rating })
+      .then(() => {
+        axios
+          .get(get_likers_url, { params: { post_id: post.id } })
+          .then((result) => {
+            post.final = result.data.likers;
+          });
       });
-  };
-
-  app.set_liker_status = function (row_idx, new_status) {
-    let post = app.vue.rows[row_idx];
-    post.show_likers = new_status;
-  };
-
-  // This function will only call the controller the first time.
-  // Afterwards it will just show the list of likers stored locally.
-  app.get_likers = function (row_idx) {
-    let post = app.vue.rows[row_idx];
-    if (post.first_load_for_like === false) {
-      axios
-        .get(get_likers_url, { params: { post_id: post.id } })
-        .then((result) => {
-          post.likers = result.data.likers;
-          post.first_load_for_like = true;
-        });
-      post.show_likers = true;
-    } else {
-      post.show_likers = true;
-    }
   };
 
   // This contains all the methods.
@@ -105,8 +66,6 @@ let init = (app) => {
     // add_post: app.add_post,
     delete_post: app.delete_post,
     set_rating: app.set_rating,
-    get_likers: app.get_likers,
-    set_liker_status: app.set_liker_status,
   };
 
   // This creates the Vue instance.
@@ -133,7 +92,7 @@ let init = (app) => {
             .get(get_rating_url, { params: { post_id: post.id } })
             .then((result) => {
               post.rating = result.data.rating;
-              post.likers = result.data.likers;
+              post.final = result.data.likers;
             });
         }
       });

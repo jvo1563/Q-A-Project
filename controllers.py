@@ -77,6 +77,11 @@ def post(post_id=None):
         post=post,
         add_answer_url=URL("add_answer", signer=url_signer),
         load_answers_url=URL("load_answers", signer=url_signer),
+        set_rating_url=URL("set_rating", signer=url_signer),
+        get_likers_url=URL("get_likers", signer=url_signer),
+        get_answer_rating_url=URL("get_answer_rating", signer=url_signer),
+        set_answer_rating_url=URL("set_answer_rating", signer=url_signer),
+        get_answer_likers_url=URL("get_answer_likers", signer=url_signer),
     )
 
 
@@ -101,17 +106,38 @@ def add_answer():
     user_email = db.answer[id].answer_user_email
     time_answered = db.answer[id].time_answered
     name = db.answer[id].name
-
     return dict(id=id, user_email=user_email, time_answered=time_answered, name=name)
 
 
-@action("load_answers")
+@action("load_answers", method=["GET", "POST"])
 @action.uses(url_signer.verify(), db)
 def load_answers():
     rows = db(db.answer).select().as_list()
     r = db(db.auth_user.email == get_user_email()).select().first()
     current_user = r.email if r is not None else "Unknown"
-    return dict(rows=rows, current_user=current_user)
+    post_id = request.json.get("post_id")
+    post = db(db.post.id == post_id).select().as_list()
+    temp = post[0]
+    temp["category"] = CATEGORY_KINDS.get(temp["category"])
+
+    temp_rating = (
+        db((db.rating.post == post_id) & (db.rating.rater == get_user()))
+        .select()
+        .first()
+    )
+    rating = temp_rating.rating if temp_rating is not None else 0
+    return dict(
+        rows=rows,
+        current_user=current_user,
+        final=temp["final"],
+        title=temp["title"],
+        text=temp["text"],
+        time_asked=temp["time_asked"],
+        category=temp["category"],
+        name=temp["name"],
+        id=temp["id"],
+        rating=rating,
+    )
 
 
 @action("load_posts")
@@ -124,15 +150,6 @@ def load_posts():
     for i in rows:
         i["category"] = CATEGORY_KINDS.get(i["category"])
     return dict(rows=rows, current_user=current_user)
-
-
-# @action("add_post", method="POST")
-# @action.uses(url_signer.verify(), db, auth.user)
-# def add_post():
-#     id = db.post.insert(content=request.json.get("content",))
-#     name = db.post[id].name
-#     user_email = db.post[id].user_email
-#     return dict(id=id, name=name, user_email=user_email)
 
 
 @action("delete_post")
@@ -167,7 +184,6 @@ def set_rating():
     """Sets the rating for an image."""
     post_id = request.json.get("post_id")
     rating = request.json.get("rating")
-    old_rating = db(db.rating.rater == get_user()).select().first()
     assert post_id is not None and rating is not None
     db.rating.update_or_insert(
         ((db.rating.post == post_id) & (db.rating.rater == get_user())),
@@ -175,29 +191,14 @@ def set_rating():
         rater=get_user(),
         rating=rating,
     )
-    post = db.post[post_id]
-    if rating == 0:
-        if old_rating.rating == 1:
-            db(db.post.id == post_id).update(final=post.final - 1)
-        elif old_rating.rating == -1:
-            db(db.post.id == post_id).update(final=post.final + 1)
-    elif rating == 1:
-        if old_rating is None:
-            db(db.post.id == post_id).update(final=post.final + rating)
-        else:
-            if old_rating.rating == 0:
-                db(db.post.id == post_id).update(final=post.final + 1)
-            elif old_rating.rating == -1:
-                db(db.post.id == post_id).update(final=post.final + 2)
-    elif rating == -1:
-        if old_rating is None:
-            db(db.post.id == post_id).update(final=post.final + rating)
-        else:
-            if old_rating.rating == 0:
-                db(db.post.id == post_id).update(final=post.final - 1)
-            if old_rating.rating == 1:
-                db(db.post.id == post_id).update(final=post.final - 2)
-
+    likers = (
+        db((db.rating.post == post_id) & (db.rating.rating == 1)).select().as_list()
+    )
+    dislikers = (
+        db((db.rating.post == post_id) & (db.rating.rating == -1)).select().as_list()
+    )
+    final = len(likers) - len(dislikers)
+    db(db.post.id == post_id).update(final=final)
     return "rating set"  # Just to have some confirmation in the Network tab.
 
 
@@ -209,3 +210,62 @@ def get_likers():
     post = db(db.post.id == post_id).select().as_list()
     temp = post[0]
     return dict(likers=temp["final"])
+
+
+@action("get_answer_rating")
+@action.uses(url_signer.verify(), db, auth.user)
+def get_answer_rating():
+    answer_id = request.params.get("answer_id")
+    row = (
+        db(
+            (db.answer_rating.answer == answer_id)
+            & (db.answer_rating.rater == get_user())
+        )
+        .select()
+        .first()
+    )
+    rating = row.rating if row is not None else 0
+    answer = db(db.answer.id == answer_id).select().as_list()
+    temp = answer[0]
+    return dict(rating=rating, final=temp["final"])
+
+
+@action("set_answer_rating", method="POST")
+@action.uses(url_signer.verify(), db, auth.user)
+def set_answer_rating():
+    answer_id = request.json.get("answer_id")
+    rating = request.json.get("rating")
+    print(answer_id)
+    print(rating)
+    assert answer_id is not None and rating is not None
+    db.answer_rating.update_or_insert(
+        (
+            (db.answer_rating.answer == answer_id)
+            & (db.answer_rating.rater == get_user())
+        ),
+        answer=answer_id,
+        rater=get_user(),
+        rating=rating,
+    )
+    likers = (
+        db((db.answer_rating.answer == answer_id) & (db.answer_rating.rating == 1))
+        .select()
+        .as_list()
+    )
+    dislikers = (
+        db((db.answer_rating.answer == answer_id) & (db.answer_rating.rating == -1))
+        .select()
+        .as_list()
+    )
+    final = len(likers) - len(dislikers)
+    db(db.answer.id == answer_id).update(final=final)
+    return "rating set"  # Just to have some confirmation in the Network tab.
+
+
+@action("get_answer_likers")
+@action.uses(url_signer.verify(), db, auth.user)
+def get_answer_likers():
+    answer_id = request.params.get("answer_id")
+    answer = db(db.answer.id == answer_id).select().as_list()
+    temp = answer[0]
+    return dict(final=temp["final"])

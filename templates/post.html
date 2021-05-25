@@ -13,16 +13,68 @@
       <span>Back</span>
     </a>
     <!-- this section is for the question -->
-    <div class="section box mt-4">
-      <h1 class="title mb-1">
-        <b>[[=post.title]]</b>
-      </h1>
+    <div class="box py-3 mt-5">
+      <div class="columns">
+        <div class="column is-1">
+          <div class="level-item">
+            <i v-if="post_rating === 1">
+              <i
+                @click="set_rating(0)"
+                class="fa fa-caret-up fa-2x has-text-success"
+              ></i>
+            </i>
+            <i v-else>
+              <i
+                @click="set_rating(1)"
+                class="fa fa-caret-up fa-2x has-text-grey"
+              ></i>
+            </i>
+          </div>
 
-      <div class="has-text-grey pb-2">
-        Asked on [[=post.time_asked]] by [[=post.name]]
+          <div class="is-size-5 my-1 has-text-info level-item">
+            {{post_final}}
+          </div>
+
+          <div class="level-item">
+            <i v-if="post_rating === -1">
+              <i
+                @click="set_rating(0)"
+                class="fa fa-caret-down fa-2x has-text-danger"
+              ></i>
+            </i>
+            <i v-else>
+              <i
+                @click="set_rating(-1)"
+                class="fa fa-caret-down fa-2x has-text-grey"
+              ></i>
+            </i>
+          </div>
+        </div>
+        <div class="column">
+          <div>
+            <span
+              class="
+                has-background-info-dark has-text-primary-light
+                is-1
+                px-1
+                py-1
+                notification
+              "
+            >
+              {{post_category}}
+            </span>
+            <span class="is-size-4 has-text-weight-bold pl-2"
+              >{{post_title}}</span
+            >
+          </div>
+
+          <div class="has-text-grey">
+            Posted on {{post_time_asked}} by {{post_name}}
+          </div>
+          <hr />
+          <div>{{post_text}}</div>
+        </div>
       </div>
-      <hr />
-      <div>[[=post.text]]</div>
     </div>
     <!--for answer button-->
     <!--if answer_mode is true-->
@@ -69,12 +121,54 @@
     <!-- ANSWERS START HERE -->
     <div class="section">
       <div v-for="r in rows.slice().reverse()" class="box">
-        <div class="is-size-4">
-          <b>{{r.name}}</b>
+        <div class="columns">
+          <div class="column is-1">
+            <div class="level-item">
+              <i v-if="r.rating === 1">
+                <i
+                  @click="set_answer_rating(r._idx, 0)"
+                  class="fa fa-caret-up fa-2x has-text-success"
+                ></i>
+              </i>
+              <i v-else>
+                <i
+                  @click="set_answer_rating(r._idx, 1)"
+                  class="fa fa-caret-up fa-2x has-text-grey"
+                ></i>
+              </i>
+            </div>
+
+            <div class="is-size-5 my-1 has-text-info level-item">
+              {{r.final}}
+            </div>
+
+            <div class="level-item">
+              <i v-if="r.rating === -1">
+                <i
+                  @click="set_answer_rating(r._idx, 0)"
+                  class="fa fa-caret-down fa-2x has-text-danger"
+                ></i>
+              </i>
+              <i v-else>
+                <i
+                  @click="set_answer_rating(r._idx, -1)"
+                  class="fa fa-caret-down fa-2x has-text-grey"
+                ></i>
+              </i>
+            </div>
+          </div>
+
+          <div class="column">
+            <div class="is-size-4">
+              <b>{{r.name}}</b>
+            </div>
+            <div class="has-text-grey pb-2">
+              Answered on {{r.time_answered}}
+            </div>
+            <hr />
+            <div>{{r.answer}}</div>
+          </div>
         </div>
-        <div class="has-text-grey pb-2">Answered on {{r.time_answered}}</div>
-        <hr />
-        <div>{{r.answer}}</div>
       </div>
     </div>
   </div>
@@ -85,6 +179,11 @@
 <script>
   let add_answer_url = "[[=XML(add_answer_url)]]";
   let load_answers_url = "[[=XML(load_answers_url)]]";
+  let set_rating_url = "[[=XML(set_rating_url)]]";
+  let get_likers_url = "[[=XML(get_likers_url)]]";
+  let set_answer_rating_url = "[[=XML(set_answer_rating_url)]]";
+  let get_answer_rating_url = "[[=XML(get_answer_rating_url)]]";
+  let get_answer_likers_url = "[[=XML(get_answer_likers_url)]]";
   let post_id = "[[=post.id]]";
 </script>
 <script src="js/post.js"></script>

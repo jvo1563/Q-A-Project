@@ -16,99 +16,73 @@
       </a>
     </div>
 
-    <div class="tile is-12 is-vertical">
+    <div class="tile is-8 is-vertical">
       <div v-for="r in rows.slice().reverse()" class="block">
-        <div
-          class="tile is-vertical has-background-grey-lighter notification py-3"
-        >
-          <div class="content has-text-weight-bold pt-2 pl-2 mb-2">
-            {{r.title}}
-          </div>
-          <div class="content pl-2 mb-2">Posted by: {{r.name}}</div>
-          <div class="content pl-2 mb-2">Category: {{r.category}}</div>
-          <div class="content pl-2 mb-2">Time asked: {{r.time_asked}}</div>
-          <div class="tile pb-3 is-full is-mobile">
-            <!-- The get_likers() function below will only call the controller the first time.
-              Afterwards it will just show the list of likers stored locally. -->
-            <div
-              @mouseenter="get_likers(r._idx)"
-              @mouseleave="set_liker_status(r._idx, false)"
-              class="tile pl-2 is-1"
-            >
-              <div v-if="r.rating === 0" class="container block">
-                <span>
-                  <i
-                    @click="set_rating(r._idx, 1)"
-                    class="
-                      fa fa-thumbs-o-up fa-2x
-                      has-text-info
-                      level-item
-                      fa-flip-horizontal
-                    "
-                  ></i>
-                  <div class="content has-text-info pt-2">{{r.likers}}</div>
-                  <i
-                    @click="set_rating(r._idx, -1)"
-                    class="fa fa-thumbs-o-down fa-2x has-text-info level-item"
-                  ></i
-                ></span>
-              </div>
-              <div v-if="r.rating === 1" class="container block">
-                <span>
+        <div class="box has-background-grey-lighter py-3">
+          <div class="columns">
+            <div class="column is-1">
+              <div class="level-item">
+                <i v-if="r.rating === 1">
                   <i
                     @click="set_rating(r._idx, 0)"
-                    class="
-                      fa fa-thumbs-up fa-2x
-                      has-text-info
-                      level-item
-                      fa-flip-horizontal
-                    "
+                    class="fa fa-caret-up fa-2x has-text-success"
                   ></i>
-                  <div class="content has-text-info pt-2">{{r.likers}}</div>
-                  <i
-                    @click="set_rating(r._idx, -1)"
-                    class="fa fa-thumbs-o-down fa-2x has-text-info level-item"
-                  ></i
-                ></span>
-              </div>
-              <div v-if="r.rating === -1" class="container block">
-                <span>
+                </i>
+                <i v-else>
                   <i
                     @click="set_rating(r._idx, 1)"
-                    class="
-                      fa fa-thumbs-o-up fa-2x
-                      has-text-info
-                      level-item
-                      fa-flip-horizontal
-                    "
+                    class="fa fa-caret-up fa-2x has-text-grey"
                   ></i>
-                  <div class="content has-text-info pt-2">{{r.likers}}</div>
-                  <i
-                    @click="set_rating(r._idx, 0)"
-                    class="fa fa-thumbs-down fa-2x has-text-info level-item"
-                  ></i
-                ></span>
+                </i>
               </div>
-            </div>
-            <!-- <div class="tile is-8">
-              <div class="content has-text-info pt-2">{{r.likers}}</div>
-            </div> -->
-            <div class="tile pr-5 level-right">
-              <span
-                v-if="r.user_email === current_user"
-                @click="delete_post(r._idx)"
-                class="icon has-text-danger"
-              >
-                <i class="fa fa-trash fa-2x"></i>
-              </span>
 
-              <span>
-                <a class="button is-success" v-bind:href="'/qa/post/'+ r.id">
-                  <i class="fa fa-caret-square-o-right"></i>
-                  <span>View</span>
-                </a>
-              </span>
+              <div class="is-size-5 my-1 has-text-info level-item">
+                {{r.final}}
+              </div>
+
+              <div class="level-item">
+                <i v-if="r.rating === -1">
+                  <i
+                    @click="set_rating(r._idx, 0)"
+                    class="fa fa-caret-down fa-2x has-text-danger"
+                  ></i>
+                </i>
+                <i v-else>
+                  <i
+                    @click="set_rating(r._idx, -1)"
+                    class="fa fa-caret-down fa-2x has-text-grey"
+                  ></i>
+                </i>
+              </div>
             </div>
+            <div class="column">
+              <div>
+                <span
+                  class="
+                    has-background-info-dark has-text-primary-light
+                    is-1
+                    px-1
+                    py-1
+                    notification
+                  "
+                >
+                  {{r.category}}
+                </span>
+                <span>
+                  <a
+                    class="is-size-4 has-text-weight-bold pl-2"
+                    v-bind:href="'/qa/post/'+ r.id"
+                  >
+                    {{r.title}}
+                  </a></span
+                >
+              </div>
+
+              <div class="has-text-grey">
+                Posted on {{r.time_asked}} by {{r.name}}
+              </div>
+            </div>
+            <!-- <div class="column has-background-info-dark">Auto</div> -->
           </div>
         </div>
       </div>

@@ -31,7 +31,7 @@ def get_user():
 ## always commit your models to avoid problems later
 
 CATEGORY_KINDS = {
-    "t": "Tech",
+    "t": "Technology",
     "s": "Science",
     "m": "Mathematics",
     "h": "History",
@@ -70,9 +70,17 @@ db.define_table(
     Field("time_answered", default=get_time, writable=False),
     Field("answer", requires=IS_NOT_EMPTY()),
     Field("name", default=get_user_name),
+    Field("final", "integer", default=0),
     # Field("like", "integer", default=0, requires=IS_INT_IN_RANGE(0, 1e6)),
     # Field("dislike", "integer", default=0, requires=IS_INT_IN_RANGE(0, 1e6)),
     ## add in best answer (chosen by poster)
+)
+
+db.define_table(
+    "answer_rating",
+    Field("answer", "reference answer"),
+    Field("rater", "reference auth_user", default=get_user),
+    Field("rating", "integer", default=0),
 )
 
 db.commit()
