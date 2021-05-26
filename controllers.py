@@ -25,6 +25,7 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
+import time
 from re import L
 from py4web import action, request, abort, redirect, URL
 from yatl.helpers import A
@@ -77,11 +78,15 @@ def post(post_id=None):
         post=post,
         add_answer_url=URL("add_answer", signer=url_signer),
         load_answers_url=URL("load_answers", signer=url_signer),
+        delete_post_url=URL("delete_post", signer=url_signer),
+        delete_answer_url=URL("delete_answer", signer=url_signer),
         set_rating_url=URL("set_rating", signer=url_signer),
         get_likers_url=URL("get_likers", signer=url_signer),
         get_answer_rating_url=URL("get_answer_rating", signer=url_signer),
         set_answer_rating_url=URL("set_answer_rating", signer=url_signer),
         get_answer_likers_url=URL("get_answer_likers", signer=url_signer),
+        edit_answer_url=URL("edit_answer", signer=url_signer),
+        edit_post_url=URL("edit_post", signer=url_signer),
     )
 
 
@@ -136,6 +141,7 @@ def load_answers():
         category=temp["category"],
         name=temp["name"],
         id=temp["id"],
+        post_email=temp["user_email"],
         rating=rating,
     )
 
@@ -206,7 +212,6 @@ def set_rating():
 @action.uses(url_signer.verify(), db, auth.user)
 def get_likers():
     post_id = request.params.get("post_id")
-
     post = db(db.post.id == post_id).select().as_list()
     temp = post[0]
     return dict(likers=temp["final"])
@@ -235,8 +240,6 @@ def get_answer_rating():
 def set_answer_rating():
     answer_id = request.json.get("answer_id")
     rating = request.json.get("rating")
-    print(answer_id)
-    print(rating)
     assert answer_id is not None and rating is not None
     db.answer_rating.update_or_insert(
         (
@@ -269,3 +272,37 @@ def get_answer_likers():
     answer = db(db.answer.id == answer_id).select().as_list()
     temp = answer[0]
     return dict(final=temp["final"])
+
+
+@action("delete_answer")
+@action.uses(url_signer.verify(), db, auth.user)
+def delete_answer():
+    id = request.params.get("id")
+    # id = request.vars.get("id") #this is another way of doing above
+    assert id is not None
+    db(db.answer.id == id).delete()
+    return "answer deleted"
+
+
+@action("edit_answer", method="POST")
+@action.uses(url_signer.verify(), db)
+def edit_answer():
+    # Updates the db record.
+    id = request.json.get("id")
+    field = request.json.get("field")
+    value = request.json.get("value")
+    db(db.answer.id == id).update(**{field: value})
+    time.sleep(0.5)  # debugging
+    return "ok"
+
+
+@action("edit_post", method="POST")
+@action.uses(url_signer.verify(), db)
+def edit_post():
+    # Updates the db record.
+    id = request.json.get("id")
+    field = request.json.get("field")
+    value = request.json.get("value")
+    db(db.post.id == id).update(**{field: value})
+    time.sleep(0.5)  # debugging
+    return "ok"

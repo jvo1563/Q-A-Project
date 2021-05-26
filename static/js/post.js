@@ -19,7 +19,9 @@ let init = (app) => {
     post_time_asked: "",
     post_category: "",
     post_id: "",
+    post_email: "",
     post_rating: 0,
+    post_edit_status: "clean",
   };
 
   app.enumerate = (a) => {
@@ -46,10 +48,13 @@ let init = (app) => {
         app.vue.rows.push({
           id: response.data.id,
           answer: app.vue.answer,
-          user_email: response.data.user_email,
+          answer_user_email: response.data.user_email,
           time_answered: response.data.time_answered,
           name: response.data.name,
           final: 0,
+          rating: 0,
+          post_id: app.vue.post_id,
+          _state: { answer: "clean" },
         });
         app.enumerate(app.vue.rows);
         app.reset_form();
@@ -74,6 +79,7 @@ let init = (app) => {
     answers.map((answer) => {
       answer.rating = 0;
       answer.final = 0;
+      answer._state = { answer: "clean" };
     });
   };
 
@@ -91,12 +97,75 @@ let init = (app) => {
       });
   };
 
+  app.delete_post = function (post_id) {
+    axios.get(delete_post_url, { params: { id: post_id } });
+    location.href = "/qa/index";
+  };
+  app.delete_answer = function (row_idx) {
+    let id = app.vue.rows[row_idx].id;
+    axios
+      .get(delete_answer_url, { params: { id: id } })
+      .then(function (response) {
+        for (let i = 0; i < app.vue.rows.length; i++) {
+          if (app.vue.rows[i].id === id) {
+            app.vue.rows.splice(i, 1);
+            app.enumerate(app.vue.rows);
+            break;
+          }
+        }
+      });
+  };
+  app.start_answer_edit = function (row_idx) {
+    app.vue.rows[row_idx]._state.answer = "edit";
+  };
+  app.stop_answer_edit = function (row_idx) {
+    let row = app.vue.rows[row_idx];
+    if (row._state.answer === "edit") {
+      row._state.answer = "pending";
+      axios
+        .post(edit_answer_url, {
+          id: row.id,
+          field: "answer",
+          value: row.answer, // row.first_name
+        })
+        .then(function (result) {
+          row._state.answer = "clean";
+        });
+    }
+    // If I was not editing, there is nothing that needs saving.
+  };
+
+  app.start_post_edit = function () {
+    app.vue.post_edit_status = "edit";
+  };
+  app.stop_post_edit = function () {
+    if (app.vue.post_edit_status === "edit") {
+      app.vue.post_edit_status = "pending";
+      axios
+        .post(edit_post_url, {
+          id: app.vue.post_id,
+          field: "text",
+          value: app.vue.post_text,
+        })
+        .then(function (result) {
+          app.vue.post_edit_status = "clean";
+        });
+    }
+    // If I was not editing, there is nothing that needs saving.
+  };
+
   // This contains all the methods.
   app.methods = {
     // Complete as you see fit.
     set_answer_status: app.set_answer_status,
     reset_form: app.reset_form,
     add_answer: app.add_answer,
+    start_answer_edit: app.start_answer_edit,
+    stop_answer_edit: app.stop_answer_edit,
+    start_post_edit: app.start_post_edit,
+    stop_post_edit: app.stop_post_edit,
+    delete_post: app.delete_post,
+    delete_answer: app.delete_answer,
     set_rating: app.set_rating,
     set_answer_rating: app.set_answer_rating,
   };
@@ -128,6 +197,7 @@ let init = (app) => {
         app.vue.post_name = response.data.name;
         app.vue.post_id = response.data.id;
         app.vue.post_rating = response.data.rating;
+        app.vue.post_email = response.data.post_email;
       })
       .then(() => {
         for (let answer of app.vue.rows) {

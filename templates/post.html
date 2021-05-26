@@ -72,7 +72,48 @@
             Posted on {{post_time_asked}} by {{post_name}}
           </div>
           <hr />
-          <div>{{post_text}}</div>
+          <div>
+            <span
+              class="control"
+              :class="{'is-loading': post_edit_status === 'pending'}"
+            >
+              <input
+                type="text"
+                class="input"
+                v-model="post_text"
+                :class="{
+                'is-focused': post_edit_status === 'edit',
+                'is-static': post_edit_status === 'clean',
+              }"
+                :readonly="post_edit_status === 'clean'"
+              />
+            </span>
+            <span
+              v-if="post_email === current_user"
+              @click="start_post_edit()"
+              class="icon has-text-primary is-pulled-right pt-1 mt-4"
+            >
+              <i class="fa fa-fw fa-edit fa-2x"></i>
+            </span>
+            <span
+              v-if="post_email === current_user"
+              @click="delete_post(post_id)"
+              class="icon has-text-danger is-pulled-right mt-4 pr-5"
+            >
+              <i class="fa fa-trash fa-2x"></i>
+            </span>
+            <div v-if="post_edit_status === 'edit'">
+              <a class="button is-primary mt-3" @click="stop_post_edit()">
+                <span>Save</span>
+              </a>
+              <a
+                class="button is-warning mt-3"
+                @click="post_edit_status = 'clean'"
+              >
+                <span>Cancel</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -166,7 +207,56 @@
               Answered on {{r.time_answered}}
             </div>
             <hr />
-            <div>{{r.answer}}</div>
+            <div>
+              <span>
+                <span
+                  class="control"
+                  :class="{'is-loading': r._state.answer === 'pending'}"
+                >
+                  <input
+                    type="text"
+                    class="input"
+                    v-model="r.answer"
+                    :class="{
+                      'is-focused': r._state.answer === 'edit',
+                      'is-static': r._state.answer === 'clean',
+                    }"
+                    :readonly="r._state.answer === 'clean'"
+                  />
+                </span>
+              </span>
+
+              <span
+                v-if="r.answer_user_email === current_user"
+                @click="start_answer_edit(r._idx)"
+                class="icon has-text-primary is-pulled-right pt-1 mt-4"
+              >
+                <i class="fa fa-fw fa-edit fa-2x"></i>
+              </span>
+
+              <span
+                v-if="r.answer_user_email === current_user"
+                @click="delete_answer(r._idx)"
+                class="icon has-text-danger is-pulled-right pr-5 mt-4"
+              >
+                <i class="fa fa-trash fa-2x"></i>
+              </span>
+
+              <div v-if="r._state.answer === 'edit'">
+                <a
+                  class="button is-primary mt-3"
+                  @click="stop_answer_edit(r._idx)"
+                >
+                  <span>Save</span>
+                </a>
+                <a
+                  class="button is-warning mt-3"
+                  @click="r._state.answer = 'clean'"
+                >
+                  <span>Cancel</span>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -178,7 +268,11 @@
 <!-- Loads the index-specific js for Vue -->
 <script>
   let add_answer_url = "[[=XML(add_answer_url)]]";
+  let edit_answer_url = "[[=XML(edit_answer_url)]]";
+  let edit_post_url = "[[=XML(edit_post_url)]]";
   let load_answers_url = "[[=XML(load_answers_url)]]";
+  let delete_post_url = "[[=XML(delete_post_url)]]";
+  let delete_answer_url = "[[=XML(delete_answer_url)]]";
   let set_rating_url = "[[=XML(set_rating_url)]]";
   let get_likers_url = "[[=XML(get_likers_url)]]";
   let set_answer_rating_url = "[[=XML(set_answer_rating_url)]]";
