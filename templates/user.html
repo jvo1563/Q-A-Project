@@ -1,0 +1,103 @@
+[[extend 'layout.html']]
+
+<style>
+  [v-cloak] {
+    display: none;
+  }
+</style>
+
+<div class="" id="vue-target" v-cloak>
+  <div class="columns">
+    <div class="column has-background-primary is-2">
+      <div class="pl-4 pt-5">
+        <div class="tile level-item">
+          <h3 class="title is-3">AskAnything</h3>
+        </div>
+        <hr />
+        <div>
+          <a href="[[=URL('index')]]">
+            <span class="tile has-background-primary is-full">
+              <span class="icon">
+                <i class="fa fa-home fa-2x"></i>
+              </span>
+              <span class="has-text-white pl-4">Home</span>
+            </span>
+          </a>
+        </div>
+
+        <div class="pt-5">
+          <a href="[[=URL('add_post')]]">
+            <span class="tile has-background-primary is-full">
+              <span class="icon">
+                <i class="icon fa fa-plus-square fa-2x"></i>
+              </span>
+              <span class="has-text-white pl-4">Ask a question!</span>
+            </span>
+          </a>
+        </div>
+
+        <div class="pt-5">
+          <a href="[[=URL('user/0')]]">
+            <span class="tile has-background-primary is-full">
+              <span class="icon">
+                <i class="fa fa-smile-o fa-2x"></i>
+              </span>
+              <span class="has-text-white pl-4">My Profile</span>
+            </span>
+          </a>
+        </div>
+
+        <div class="pt-5 control block">
+          <input
+            class="has-background-grey-light"
+            type="text"
+            placeholder="Search.."
+          />
+          <a class="button is-primary">
+            <span>Search</span>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="section">
+        <h3 class="title is-3">[[=name ]]'s Profile</h3>
+        <div class="box">
+          <div class="tile is-ancestor">
+            <div class="tile is-parent is-vertical is-2">
+              <img width="250" :src="thumbnail" />
+              <div class="px-5 pt-2">
+                <div class="file is-info">
+                  <label class="file-label">
+                    <input
+                      class="file-input"
+                      type="file"
+                      accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                      @change="upload_file($event)"
+                    />
+                    <span class="file-cta">
+                      <span class="file-label">
+                        <span><i class="fa fa-upload"></i></span>
+                        <span class="pl-2">Edit Profile Picture</span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+  let profile_picture = "[[=picture]]";
+  let id = "[[=id]]";
+</script>
+<script src="js/user.js"></script>
+[[end]]

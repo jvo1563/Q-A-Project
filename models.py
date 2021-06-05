@@ -2,9 +2,10 @@
 This file defines the database models
 """
 
-import datetime
+import datetime, base64, os
 from .common import db, Field, auth, T
 from pydal.validators import *
+from .settings import APP_FOLDER
 
 
 def get_user_email():
@@ -22,6 +23,14 @@ def get_user_name():
 
 def get_user():
     return auth.current_user.get("id") if auth.current_user else None
+
+
+def default_pic():
+    file = os.path.join(APP_FOLDER, "static", "default.jpg")
+    with open(file, "rb") as img_file:
+        my_string = base64.b64encode(img_file.read())
+    full = "data:image/jpeg;base64,{}".format(my_string.decode("utf-8"))
+    return full
 
 
 ### Define your table below
@@ -83,4 +92,10 @@ db.define_table(
     Field("rating", "integer", default=0),
 )
 
+db.define_table(
+    "user",
+    Field("auth_id", "reference auth_user"),
+    Field("thumbnail", "text", default=default_pic),
+    Field("bio"),
+)
 db.commit()

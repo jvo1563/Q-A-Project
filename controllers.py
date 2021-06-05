@@ -42,7 +42,7 @@ from .common import (
     Field,
 )
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email, get_user
+from .models import get_user_email, get_user, get_user_name, default_pic
 from py4web.utils.form import Form, FormStyleBulma
 from pydal.validators import *
 from .models import CATEGORY_KINDS
@@ -53,6 +53,10 @@ url_signer = URLSigner(session)
 @action("index")
 @action.uses(db, auth.user, url_signer, "index.html")
 def index():
+    db.user.update_or_insert(
+        (db.user.auth_id == get_user()), auth_id=get_user(),
+    )
+
     return dict(
         load_posts_url=URL("load_posts", signer=url_signer),
         add_post_url=URL("add_post", signer=url_signer),
@@ -64,9 +68,39 @@ def index():
     )
 
 
+@action("user/<user_id:int>", method=["GET", "POST"])
+@action.uses(db, auth.user, url_signer, "user.html")
+def user(user_id=None):
+    db.user.update_or_insert(
+        (db.user.auth_id == get_user()), auth_id=get_user(),
+    )
+    if user_id == 0:
+        redirect(URL("user", get_user()))
+    user = db.user[user_id]
+    if user is None:
+        # Nothing found to be edited!
+        redirect(URL("index"))
+
+    r = db(db.auth_user.id == user.auth_id).select().first()
+    name = r.first_name + " " + r.last_name if r is not None else "Unknown"
+    # db(db.user.id == user_id).update(thumbnail=default_pic())
+    picture = user.thumbnail
+    id = user_id
+
+    return dict(
+        id=id,
+        name=name,
+        picture=picture,
+        upload_thumbnail_url=URL("upload_thumbnail", signer=url_signer),
+    )
+
+
 @action("post/<post_id:int>", method=["GET", "POST"])
 @action.uses(db, auth.user, url_signer, "post.html")
 def post(post_id=None):
+    db.user.update_or_insert(
+        (db.user.auth_id == get_user()), auth_id=get_user(),
+    )
     assert post_id is not None
     p = db.post[post_id]
     if p is None:
@@ -87,6 +121,7 @@ def post(post_id=None):
         get_answer_likers_url=URL("get_answer_likers", signer=url_signer),
         edit_answer_url=URL("edit_answer", signer=url_signer),
         edit_post_url=URL("edit_post", signer=url_signer),
+        get_answer_thumbnail_url=URL("get_answer_thumbnail", signer=url_signer),
     )
 
 
@@ -111,7 +146,16 @@ def add_answer():
     user_email = db.answer[id].answer_user_email
     time_answered = db.answer[id].time_answered
     name = db.answer[id].name
-    return dict(id=id, user_email=user_email, time_answered=time_answered, name=name)
+    r = db(db.auth_user.email == user_email).select().first()
+    user = db(db.user.auth_id == r.id).select().first()
+    thumbnail = user.thumbnail
+    return dict(
+        id=id,
+        user_email=user_email,
+        time_answered=time_answered,
+        name=name,
+        thumbnail=thumbnail,
+    )
 
 
 @action("load_answers", method=["GET", "POST"])
@@ -306,3 +350,22 @@ def edit_post():
     db(db.post.id == id).update(**{field: value})
     time.sleep(0.5)  # debugging
     return "ok"
+
+
+@action("upload_thumbnail", method="POST")
+@action.uses(url_signer.verify(), db)
+def upload_thumbnail():
+    user_id = request.json.get("user_id")
+    thumbnail = request.json.get("thumbnail")
+    db(db.user.id == user_id).update(thumbnail=thumbnail)
+    return "ok"
+
+
+@action("get_answer_thumbnail")
+@action.uses(url_signer.verify(), db, auth.user)
+def get_answer_thumbnail():
+    answer_email = request.params.get("email")
+    r = db(db.auth_user.email == answer_email).select().first()
+    user = db(db.user.auth_id == r.id).select().first()
+    thumbnail = user.thumbnail
+    return dict(thumbnail=thumbnail)

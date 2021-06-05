@@ -55,6 +55,7 @@ let init = (app) => {
           rating: 0,
           post_id: app.vue.post_id,
           _state: { answer: "clean" },
+          thumbnail: response.data.thumbnail,
         });
         app.enumerate(app.vue.rows);
         app.reset_form();
@@ -80,6 +81,14 @@ let init = (app) => {
       answer.rating = 0;
       answer.final = 0;
       answer._state = { answer: "clean" };
+      axios
+        .get(get_answer_thumbnail_url, {
+          params: { email: answer.answer_user_email },
+        })
+        .then(function (response) {
+          answer.thumbnail = response.data.thumbnail;
+          // answer.thumbnail = 1;
+        });
     });
   };
 

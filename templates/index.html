@@ -6,83 +6,133 @@
   }
 </style>
 
-<div class="section" id="vue-target" v-cloak>
+<div class="" id="vue-target" v-cloak>
   <!-- Put here your Vue.js template -->
-  <div class="container block">
-    <h1 class="title">AskAnything</h1>
-    <div class="pb-4">
-      <a class="button is-primary" href="[[=URL('add_post')]]">
-        <span>Ask a question!</span>
-      </a>
-    </div>
-
-    <div class="tile is-8 is-vertical">
-      <div v-for="r in rows.slice().reverse()" class="block">
-        <div class="box has-background-grey-lighter py-3">
-          <div class="columns">
-            <div class="column is-1">
-              <div class="level-item">
-                <i v-if="r.rating === 1">
-                  <i
-                    @click="set_rating(r._idx, 0)"
-                    class="fa fa-caret-up fa-2x has-text-success"
-                  ></i>
-                </i>
-                <i v-else>
-                  <i
-                    @click="set_rating(r._idx, 1)"
-                    class="fa fa-caret-up fa-2x has-text-grey"
-                  ></i>
-                </i>
-              </div>
-
-              <div class="is-size-5 my-1 has-text-info level-item">
-                {{r.final}}
-              </div>
-
-              <div class="level-item">
-                <i v-if="r.rating === -1">
-                  <i
-                    @click="set_rating(r._idx, 0)"
-                    class="fa fa-caret-down fa-2x has-text-danger"
-                  ></i>
-                </i>
-                <i v-else>
-                  <i
-                    @click="set_rating(r._idx, -1)"
-                    class="fa fa-caret-down fa-2x has-text-grey"
-                  ></i>
-                </i>
-              </div>
-            </div>
-            <div class="column">
-              <div>
-                <span
-                  class="
-                    has-background-info-dark has-text-primary-light
-                    is-1
-                    px-1
-                    py-1
-                    notification
-                  "
-                >
-                  {{r.category}}
+  <div class="block">
+    <div class="columns">
+      <div class="column has-background-primary is-2">
+        <div class="pl-4 pt-5">
+          <div class="tile level-item">
+            <h3 class="title is-3">AskAnything</h3>
+          </div>
+          <hr />
+          <div>
+            <a href="[[=URL('index')]]">
+              <span class="tile has-background-primary is-full">
+                <span class="icon">
+                  <i class="fa fa-home fa-2x"></i>
                 </span>
-                <span>
-                  <a
-                    class="is-size-4 has-text-weight-bold pl-2"
-                    v-bind:href="'/qa/post/'+ r.id"
-                  >
-                    {{r.title}}
-                  </a></span
-                >
-              </div>
+                <span class="has-text-white pl-4">Home</span>
+              </span>
+            </a>
+          </div>
 
-              <div class="has-text-grey">
-                Posted on {{r.time_asked}} by {{r.name}}
+          <div class="pt-5">
+            <a href="[[=URL('add_post')]]">
+              <span class="tile has-background-primary is-full">
+                <span class="icon">
+                  <i class="icon fa fa-plus-square fa-2x"></i>
+                </span>
+                <span class="has-text-white pl-4">Ask a question!</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="pt-5">
+            <a href="[[=URL('user/0')]]">
+              <span class="tile has-background-primary is-full">
+                <span class="icon">
+                  <i class="fa fa-smile-o fa-2x"></i>
+                </span>
+                <span class="has-text-white pl-4">My Profile</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="pt-5 control block">
+            <input
+              class="has-background-grey-light"
+              type="text"
+              placeholder="Search.."
+            />
+            <a class="button is-primary">
+              <span>Search</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="column">
+        <div class="tile is-vertical pr-5 pt-6">
+          <h4 class="title is-4">Home Feed</h4>
+          <div v-for="r in rows.slice().reverse()" class="block">
+            <div class="box has-background-grey-lighter py-3">
+              <div class="columns">
+                <div class="column is-1">
+                  <div class="level-item">
+                    <i v-if="r.rating === 1">
+                      <i
+                        @click="set_rating(r._idx, 0)"
+                        class="fa fa-caret-up fa-2x has-text-success"
+                      ></i>
+                    </i>
+                    <i v-else>
+                      <i
+                        @click="set_rating(r._idx, 1)"
+                        class="fa fa-caret-up fa-2x has-text-grey"
+                      ></i>
+                    </i>
+                  </div>
+
+                  <div class="is-size-5 my-1 has-text-info level-item">
+                    {{r.final}}
+                  </div>
+
+                  <div class="level-item">
+                    <i v-if="r.rating === -1">
+                      <i
+                        @click="set_rating(r._idx, 0)"
+                        class="fa fa-caret-down fa-2x has-text-danger"
+                      ></i>
+                    </i>
+                    <i v-else>
+                      <i
+                        @click="set_rating(r._idx, -1)"
+                        class="fa fa-caret-down fa-2x has-text-grey"
+                      ></i>
+                    </i>
+                  </div>
+                </div>
+                <div class="column">
+                  <div>
+                    <span
+                      class="
+                        has-background-info-dark has-text-primary-light
+                        is-1
+                        px-1
+                        py-1
+                        notification
+                      "
+                    >
+                      {{r.category}}
+                    </span>
+                    <span>
+                      <a
+                        class="is-size-4 has-text-weight-bold pl-2"
+                        v-bind:href="'/qa/post/'+ r.id"
+                      >
+                        {{r.title}}
+                      </a></span
+                    >
+                  </div>
+
+                  <div class="has-text-grey">
+                    Posted on {{r.time_asked}} by {{r.name}}
+                  </div>
+                </div>
+                <!-- <div class="column has-background-info-dark">Auto</div> -->
               </div>
             </div>
-            <!-- <div class="column has-background-info-dark">Auto</div> -->
           </div>
         </div>
       </div>

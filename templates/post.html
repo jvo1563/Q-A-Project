@@ -6,255 +6,316 @@
   }
 </style>
 
-<div class="section" id="vue-target" v-cloak>
-  <div class="container block">
-    <a class="button is-success" href="[[=URL('index')]]">
-      <i class="fa fa-fw fa-backward"></i>
-      <span>Back</span>
-    </a>
-    <!-- this section is for the question -->
-    <div class="box py-3 mt-5">
-      <div class="columns">
-        <div class="column is-1">
-          <div class="level-item">
-            <i v-if="post_rating === 1">
-              <i
-                @click="set_rating(0)"
-                class="fa fa-caret-up fa-2x has-text-success"
-              ></i>
-            </i>
-            <i v-else>
-              <i
-                @click="set_rating(1)"
-                class="fa fa-caret-up fa-2x has-text-grey"
-              ></i>
-            </i>
-          </div>
-
-          <div class="is-size-5 my-1 has-text-info level-item">
-            {{post_final}}
-          </div>
-
-          <div class="level-item">
-            <i v-if="post_rating === -1">
-              <i
-                @click="set_rating(0)"
-                class="fa fa-caret-down fa-2x has-text-danger"
-              ></i>
-            </i>
-            <i v-else>
-              <i
-                @click="set_rating(-1)"
-                class="fa fa-caret-down fa-2x has-text-grey"
-              ></i>
-            </i>
-          </div>
-        </div>
-        <div class="column">
-          <div>
-            <span
-              class="
-                has-background-info-dark has-text-primary-light
-                is-1
-                px-1
-                py-1
-                notification
-              "
-            >
-              {{post_category}}
-            </span>
-            <span class="is-size-4 has-text-weight-bold pl-2"
-              >{{post_title}}</span
-            >
-          </div>
-
-          <div class="has-text-grey">
-            Posted on {{post_time_asked}} by {{post_name}}
+<div class="" id="vue-target" v-cloak>
+  <div class="block">
+    <div class="columns">
+      <div class="column has-background-primary is-2">
+        <div class="pl-4 pt-5">
+          <div class="tile level-item">
+            <h3 class="title is-3">AskAnything</h3>
           </div>
           <hr />
           <div>
-            <span
-              class="control"
-              :class="{'is-loading': post_edit_status === 'pending'}"
-            >
-              <input
-                type="text"
-                class="input"
-                v-model="post_text"
-                :class="{
+            <a href="[[=URL('index')]]">
+              <span class="tile has-background-primary is-full">
+                <span class="icon">
+                  <i class="fa fa-home fa-2x"></i>
+                </span>
+                <span class="has-text-white pl-4">Home</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="pt-5">
+            <a href="[[=URL('add_post')]]">
+              <span class="tile has-background-primary is-full">
+                <span class="icon">
+                  <i class="icon fa fa-plus-square fa-2x"></i>
+                </span>
+                <span class="has-text-white pl-4">Ask a question!</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="pt-5">
+            <a href="[[=URL('user/0')]]">
+              <span class="tile has-background-primary is-full">
+                <span class="icon">
+                  <i class="fa fa-smile-o fa-2x"></i>
+                </span>
+                <span class="has-text-white pl-4">My Profile</span>
+              </span>
+            </a>
+          </div>
+
+          <div class="pt-5 control block">
+            <input
+              class="has-background-grey-light"
+              type="text"
+              placeholder="Search.."
+            />
+            <a class="button is-primary">
+              <span>Search</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="column">
+        <div class="pr-5 pt-4">
+          <!-- this section is for the question -->
+          <div class="box py-3 mt-5">
+            <div class="columns">
+              <div class="column is-1">
+                <div class="level-item">
+                  <i v-if="post_rating === 1">
+                    <i
+                      @click="set_rating(0)"
+                      class="fa fa-caret-up fa-2x has-text-success"
+                    ></i>
+                  </i>
+                  <i v-else>
+                    <i
+                      @click="set_rating(1)"
+                      class="fa fa-caret-up fa-2x has-text-grey"
+                    ></i>
+                  </i>
+                </div>
+
+                <div class="is-size-5 my-1 has-text-info level-item">
+                  {{post_final}}
+                </div>
+
+                <div class="level-item">
+                  <i v-if="post_rating === -1">
+                    <i
+                      @click="set_rating(0)"
+                      class="fa fa-caret-down fa-2x has-text-danger"
+                    ></i>
+                  </i>
+                  <i v-else>
+                    <i
+                      @click="set_rating(-1)"
+                      class="fa fa-caret-down fa-2x has-text-grey"
+                    ></i>
+                  </i>
+                </div>
+              </div>
+              <div class="column">
+                <div>
+                  <span
+                    class="
+                      has-background-info-dark has-text-primary-light
+                      is-1
+                      px-1
+                      py-1
+                      notification
+                    "
+                  >
+                    {{post_category}}
+                  </span>
+                  <span class="is-size-4 has-text-weight-bold pl-2"
+                    >{{post_title}}</span
+                  >
+                </div>
+
+                <div class="has-text-grey">
+                  Posted on {{post_time_asked}} by {{post_name}}
+                </div>
+                <hr />
+                <div>
+                  <span
+                    class="control"
+                    :class="{'is-loading': post_edit_status === 'pending'}"
+                  >
+                    <input
+                      type="text"
+                      class="input"
+                      v-model="post_text"
+                      :class="{
                 'is-focused': post_edit_status === 'edit',
                 'is-static': post_edit_status === 'clean',
               }"
-                :readonly="post_edit_status === 'clean'"
-              />
-            </span>
-            <span
-              v-if="post_email === current_user"
-              @click="start_post_edit()"
-              class="icon has-text-primary is-pulled-right pt-1 mt-4"
-            >
-              <i class="fa fa-fw fa-edit fa-2x"></i>
-            </span>
-            <span
-              v-if="post_email === current_user"
-              @click="delete_post(post_id)"
-              class="icon has-text-danger is-pulled-right mt-4 pr-5"
-            >
-              <i class="fa fa-trash fa-2x"></i>
-            </span>
-            <div v-if="post_edit_status === 'edit'">
-              <a class="button is-primary mt-3" @click="stop_post_edit()">
-                <span>Save</span>
-              </a>
-              <a
-                class="button is-warning mt-3"
-                @click="post_edit_status = 'clean'"
-              >
-                <span>Cancel</span>
-              </a>
+                      :readonly="post_edit_status === 'clean'"
+                    />
+                  </span>
+                  <span
+                    v-if="post_email === current_user"
+                    @click="start_post_edit()"
+                    class="icon has-text-primary is-pulled-right pt-1 mt-4"
+                  >
+                    <i class="fa fa-fw fa-edit fa-2x"></i>
+                  </span>
+                  <span
+                    v-if="post_email === current_user"
+                    @click="delete_post(post_id)"
+                    class="icon has-text-danger is-pulled-right mt-4 pr-5"
+                  >
+                    <i class="fa fa-trash fa-2x"></i>
+                  </span>
+                  <div v-if="post_edit_status === 'edit'">
+                    <a class="button is-primary mt-3" @click="stop_post_edit()">
+                      <span>Save</span>
+                    </a>
+                    <a
+                      class="button is-warning mt-3"
+                      @click="post_edit_status = 'clean'"
+                    >
+                      <span>Cancel</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-    <!--for answer button-->
-    <!--if answer_mode is true-->
-    <div v-if="answer_status" class="container block">
-      <div class="form">
-        <div class="field">
-          <div class="control">
-            <textarea
-              class="textarea is-info"
-              type="text"
-              placeholder="Enter answer here"
-              v-model="answer"
-            ></textarea>
-          </div>
-        </div>
-
-        <div class="field">
-          <div class="control">
-            <input
-              type="submit"
-              @click="add_answer"
-              value="Post"
-              class="button is-primary"
-            />
-            <input
-              type="submit"
-              @click="set_answer_status(false)"
-              value="Cancel"
-              class="button is-warning"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div v-else>
-      <input
-        type="submit"
-        @click="set_answer_status(true)"
-        value="Answer"
-        class="button is-primary"
-      />
-    </div>
-    <!-- ANSWERS START HERE -->
-    <div class="section">
-      <div v-for="r in rows.slice().reverse()" class="box">
-        <div class="columns">
-          <div class="column is-1">
-            <div class="level-item">
-              <i v-if="r.rating === 1">
-                <i
-                  @click="set_answer_rating(r._idx, 0)"
-                  class="fa fa-caret-up fa-2x has-text-success"
-                ></i>
-              </i>
-              <i v-else>
-                <i
-                  @click="set_answer_rating(r._idx, 1)"
-                  class="fa fa-caret-up fa-2x has-text-grey"
-                ></i>
-              </i>
-            </div>
-
-            <div class="is-size-5 my-1 has-text-info level-item">
-              {{r.final}}
-            </div>
-
-            <div class="level-item">
-              <i v-if="r.rating === -1">
-                <i
-                  @click="set_answer_rating(r._idx, 0)"
-                  class="fa fa-caret-down fa-2x has-text-danger"
-                ></i>
-              </i>
-              <i v-else>
-                <i
-                  @click="set_answer_rating(r._idx, -1)"
-                  class="fa fa-caret-down fa-2x has-text-grey"
-                ></i>
-              </i>
-            </div>
-          </div>
-
-          <div class="column">
-            <div class="is-size-4">
-              <b>{{r.name}}</b>
-            </div>
-            <div class="has-text-grey pb-2">
-              Answered on {{r.time_answered}}
-            </div>
-            <hr />
-            <div>
-              <span>
-                <span
-                  class="control"
-                  :class="{'is-loading': r._state.answer === 'pending'}"
-                >
-                  <input
+          <!--for answer button-->
+          <!--if answer_mode is true-->
+          <div v-if="answer_status" class="container block">
+            <div class="form">
+              <div class="field">
+                <div class="control">
+                  <textarea
+                    class="textarea is-info"
                     type="text"
-                    class="input"
-                    v-model="r.answer"
-                    :class="{
+                    placeholder="Enter answer here"
+                    v-model="answer"
+                  ></textarea>
+                </div>
+              </div>
+
+              <div class="field">
+                <div class="control">
+                  <input
+                    type="submit"
+                    @click="add_answer"
+                    value="Post"
+                    class="button is-primary"
+                  />
+                  <input
+                    type="submit"
+                    @click="set_answer_status(false)"
+                    value="Cancel"
+                    class="button is-warning"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div v-else>
+            <input
+              type="submit"
+              @click="set_answer_status(true)"
+              value="Answer"
+              class="button is-primary is-pulled-right"
+            />
+          </div>
+          <!-- ANSWERS START HERE -->
+          <div class="section">
+            <div v-for="r in rows.slice().reverse()" class="box">
+              <div class="columns">
+                <div class="column is-1">
+                  <div class="level-item">
+                    <i v-if="r.rating === 1">
+                      <i
+                        @click="set_answer_rating(r._idx, 0)"
+                        class="fa fa-caret-up fa-2x has-text-success"
+                      ></i>
+                    </i>
+                    <i v-else>
+                      <i
+                        @click="set_answer_rating(r._idx, 1)"
+                        class="fa fa-caret-up fa-2x has-text-grey"
+                      ></i>
+                    </i>
+                  </div>
+
+                  <div class="is-size-5 my-1 has-text-info level-item">
+                    {{r.final}}
+                  </div>
+
+                  <div class="level-item">
+                    <i v-if="r.rating === -1">
+                      <i
+                        @click="set_answer_rating(r._idx, 0)"
+                        class="fa fa-caret-down fa-2x has-text-danger"
+                      ></i>
+                    </i>
+                    <i v-else>
+                      <i
+                        @click="set_answer_rating(r._idx, -1)"
+                        class="fa fa-caret-down fa-2x has-text-grey"
+                      ></i>
+                    </i>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <div class="columns">
+                    <div class="column is-1">
+                      <img width="100" :src="r.thumbnail" />
+                    </div>
+                    <div class="column">
+                      <div class="is-size-4">
+                        <b>{{r.name}}</b>
+                      </div>
+                      <div class="has-text-grey pb-2">
+                        Answered on {{r.time_answered}}
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr />
+                  <div>
+                    <span>
+                      <span
+                        class="control"
+                        :class="{'is-loading': r._state.answer === 'pending'}"
+                      >
+                        <input
+                          type="text"
+                          class="input"
+                          v-model="r.answer"
+                          :class="{
                       'is-focused': r._state.answer === 'edit',
                       'is-static': r._state.answer === 'clean',
                     }"
-                    :readonly="r._state.answer === 'clean'"
-                  />
-                </span>
-              </span>
+                          :readonly="r._state.answer === 'clean'"
+                        />
+                      </span>
+                    </span>
 
-              <span
-                v-if="r.answer_user_email === current_user"
-                @click="start_answer_edit(r._idx)"
-                class="icon has-text-primary is-pulled-right pt-1 mt-4"
-              >
-                <i class="fa fa-fw fa-edit fa-2x"></i>
-              </span>
+                    <span
+                      v-if="r.answer_user_email === current_user"
+                      @click="start_answer_edit(r._idx)"
+                      class="icon has-text-primary is-pulled-right pt-1 mt-4"
+                    >
+                      <i class="fa fa-fw fa-edit fa-2x"></i>
+                    </span>
 
-              <span
-                v-if="r.answer_user_email === current_user"
-                @click="delete_answer(r._idx)"
-                class="icon has-text-danger is-pulled-right pr-5 mt-4"
-              >
-                <i class="fa fa-trash fa-2x"></i>
-              </span>
+                    <span
+                      v-if="r.answer_user_email === current_user"
+                      @click="delete_answer(r._idx)"
+                      class="icon has-text-danger is-pulled-right pr-5 mt-4"
+                    >
+                      <i class="fa fa-trash fa-2x"></i>
+                    </span>
 
-              <div v-if="r._state.answer === 'edit'">
-                <a
-                  class="button is-primary mt-3"
-                  @click="stop_answer_edit(r._idx)"
-                >
-                  <span>Save</span>
-                </a>
-                <a
-                  class="button is-warning mt-3"
-                  @click="r._state.answer = 'clean'"
-                >
-                  <span>Cancel</span>
-                </a>
+                    <div v-if="r._state.answer === 'edit'">
+                      <a
+                        class="button is-primary mt-3"
+                        @click="stop_answer_edit(r._idx)"
+                      >
+                        <span>Save</span>
+                      </a>
+                      <a
+                        class="button is-warning mt-3"
+                        @click="r._state.answer = 'clean'"
+                      >
+                        <span>Cancel</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -278,6 +339,7 @@
   let set_answer_rating_url = "[[=XML(set_answer_rating_url)]]";
   let get_answer_rating_url = "[[=XML(get_answer_rating_url)]]";
   let get_answer_likers_url = "[[=XML(get_answer_likers_url)]]";
+  let get_answer_thumbnail_url = "[[=XML(get_answer_thumbnail_url)]]";
   let post_id = "[[=post.id]]";
 </script>
 <script src="js/post.js"></script>
