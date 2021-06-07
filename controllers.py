@@ -85,17 +85,6 @@ def index():
     )
 
 
-@action("test")
-@action.uses(db, auth.user, "test.html")
-def test():
-    return dict(
-        file_info_url=URL("file_info", signer=url_signer),
-        obtain_gcs_url=URL("obtain_gcs", signer=url_signer),
-        notify_url=URL("notify_upload", signer=url_signer),
-        delete_url=URL("notify_delete", signer=url_signer),
-    )
-
-
 @action("user/<user_id:int>", method=["GET", "POST"])
 @action.uses(db, auth.user, url_signer, "user.html")
 def user(user_id=None):
