@@ -1,5 +1,11 @@
 # Q-A-Project
 
+Class: CSE 183
+
+Assignment: Final Project
+
+Year: Spring 2021
+
 # Made by
 
 Name: Joeny Vo
