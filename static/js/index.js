@@ -10,8 +10,7 @@ let init = (app) => {
     // Complete as you see fit.
     current_user: "",
     rows: [],
-    post_url: post_url,
-    user_url: user_url,
+    post_link: post_link,
   };
 
   app.enumerate = (a) => {

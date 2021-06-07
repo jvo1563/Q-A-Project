@@ -109,11 +109,10 @@
                       {{r.category}}
                     </span>
                     <span>
-                      <a
-                        class="is-size-4 has-text-weight-bold pl-2"
-                        v-bind:href="post_url + '/'+ r.id"
-                      >
-                        {{r.title}}
+                      <a v-bind:href="post_link+'/'+r.id">
+                        <span class="is-size-4 has-text-weight-bold pl-2">
+                          {{r.title}}
+                        </span>
                       </a></span
                     >
                   </div>
@@ -140,8 +139,7 @@
   let get_rating_url = "[[=XML(get_rating_url)]]";
   let set_rating_url = "[[=XML(set_rating_url)]]";
   let get_likers_url = "[[=XML(get_likers_url)]]";
-  let post_url = "[[=URL('post')]]";
-  let user_url = "[[=URL('user')]]";
+  let post_link = "[[=URL('post')]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
