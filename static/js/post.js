@@ -22,6 +22,9 @@ let init = (app) => {
     post_email: "",
     post_rating: 0,
     post_edit_status: "clean",
+    post_user_id: post_user_id,
+    post_download_url: "",
+    url: url,
   };
 
   app.enumerate = (a) => {
@@ -55,7 +58,8 @@ let init = (app) => {
           rating: 0,
           post_id: app.vue.post_id,
           _state: { answer: "clean" },
-          thumbnail: response.data.thumbnail,
+          user_id: response.data.user_id,
+          download_url: response.data.download_url,
         });
         app.enumerate(app.vue.rows);
         app.reset_form();
@@ -86,8 +90,7 @@ let init = (app) => {
           params: { email: answer.answer_user_email },
         })
         .then(function (response) {
-          answer.thumbnail = response.data.thumbnail;
-          // answer.thumbnail = 1;
+          answer.user_id = response.data.user_id;
         });
     });
   };
@@ -216,7 +219,21 @@ let init = (app) => {
               answer.rating = result.data.rating;
               answer.final = result.data.final;
             });
+          axios
+            .get(post_pictures_url, {
+              params: { email: answer.answer_user_email },
+            })
+            .then(function (r) {
+              answer.download_url = r.data.download_url;
+            });
         }
+        axios
+          .get(post_pictures_url, {
+            params: { email: app.vue.post_email },
+          })
+          .then(function (r) {
+            app.vue.post_download_url = r.data.download_url;
+          });
       });
   };
 

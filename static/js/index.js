@@ -10,6 +10,8 @@ let init = (app) => {
     // Complete as you see fit.
     current_user: "",
     rows: [],
+    post_url: post_url,
+    user_url: user_url,
   };
 
   app.enumerate = (a) => {
@@ -91,6 +93,7 @@ let init = (app) => {
           axios
             .get(get_rating_url, { params: { post_id: post.id } })
             .then((result) => {
+              post.user_id = result.data.user_id;
               post.rating = result.data.rating;
               post.final = result.data.likers;
             });

@@ -42,12 +42,6 @@ function humanFileSize(bytes, si = false, dp = 1) {
 let init = (app) => {
   // This is the Vue data.
   app.data = {
-    // Complete as you see fit.
-    bio_text: user_bio,
-    bio_edit_status: "clean",
-    user_id: id,
-    current_user_email: current_user,
-    profile_email: profile_email,
     file_name: null, // File name
     file_type: null, // File type
     file_date: null, // Date when file uploaded
@@ -57,24 +51,6 @@ let init = (app) => {
     uploading: false, // upload in progress
     deleting: false, // delete in progress
     delete_confirmation: false, // Show the delete confirmation thing.
-  };
-  app.start_bio_edit = function () {
-    app.vue.bio_edit_status = "edit";
-  };
-  app.stop_bio_edit = function () {
-    if (app.vue.bio_edit_status === "edit") {
-      app.vue.bio_edit_status = "pending";
-      axios
-        .post(edit_bio_url, {
-          id: app.vue.user_id,
-          field: "bio",
-          value: app.vue.bio_text,
-        })
-        .then(function (result) {
-          app.vue.bio_edit_status = "clean";
-        });
-    }
-    // If I was not editing, there is nothing that needs saving.
   };
 
   app.enumerate = (a) => {
@@ -201,13 +177,6 @@ let init = (app) => {
             req.open("DELETE", delete_url);
             req.send();
           }
-          axios
-            .get(file_info_url, {
-              params: { email: app.vue.profile_email },
-            })
-            .then(function (r) {
-              app.set_result(r);
-            });
         });
     }
   };
@@ -264,8 +233,6 @@ let init = (app) => {
 
   // This contains all the methods.
   app.methods = {
-    start_bio_edit: app.start_bio_edit,
-    stop_bio_edit: app.stop_bio_edit,
     upload_file: app.upload_file, // Uploads a selected file
     delete_file: app.delete_file, // Delete the file.
     download_file: app.download_file, // Downloads it.
@@ -275,6 +242,7 @@ let init = (app) => {
   app.vue = new Vue({
     el: "#vue-target",
     data: app.data,
+    computed: app.computed,
     methods: app.methods,
   });
 
@@ -282,13 +250,9 @@ let init = (app) => {
   app.init = () => {
     // Put here any initialization code.
     // Typically this is a server GET call to load the data.
-    axios
-      .get(file_info_url, {
-        params: { email: app.vue.profile_email },
-      })
-      .then(function (r) {
-        app.set_result(r);
-      });
+    axios.get(file_info_url).then(function (r) {
+      app.set_result(r);
+    });
   };
 
   // Call to the initializer.

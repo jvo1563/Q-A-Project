@@ -12,7 +12,7 @@
       <div class="column has-background-primary is-2">
         <div class="pl-4 pt-5">
           <div class="tile level-item">
-            <h3 class="title is-3">AskAnything</h3>
+            <h3 class="title is-3 has-text-black">AskAnything</h3>
           </div>
           <hr />
           <div>
@@ -21,7 +21,7 @@
                 <span class="icon">
                   <i class="fa fa-home fa-2x"></i>
                 </span>
-                <span class="has-text-white pl-4">Home</span>
+                <span class="pl-4 has-text-black-bis">Home</span>
               </span>
             </a>
           </div>
@@ -32,7 +32,7 @@
                 <span class="icon">
                   <i class="icon fa fa-plus-square fa-2x"></i>
                 </span>
-                <span class="has-text-white pl-4">Ask a question!</span>
+                <span class="pl-4 has-text-black-bis">Ask a question!</span>
               </span>
             </a>
           </div>
@@ -43,19 +43,8 @@
                 <span class="icon">
                   <i class="fa fa-smile-o fa-2x"></i>
                 </span>
-                <span class="has-text-white pl-4">My Profile</span>
+                <span class="pl-4 has-text-black-bis">My Profile</span>
               </span>
-            </a>
-          </div>
-
-          <div class="pt-5 control block">
-            <input
-              class="has-background-grey-light"
-              type="text"
-              placeholder="Search.."
-            />
-            <a class="button is-primary">
-              <span>Search</span>
             </a>
           </div>
         </div>
@@ -101,26 +90,36 @@
                 </div>
               </div>
               <div class="column">
-                <div>
-                  <span
-                    class="
-                      has-background-info-dark has-text-primary-light
-                      is-1
-                      px-1
-                      py-1
-                      notification
-                    "
-                  >
-                    {{post_category}}
-                  </span>
-                  <span class="is-size-4 has-text-weight-bold pl-2"
-                    >{{post_title}}</span
-                  >
+                <div class="columns">
+                  <div class="column is-1">
+                    <img width="100" :src="post_download_url" />
+                  </div>
+                  <div class="column">
+                    <a v-bind:href="url +'/'+ post_user_id">
+                      <div>
+                        <span
+                          class="
+                            has-background-info-dark has-text-primary-light
+                            is-1
+                            px-1
+                            py-1
+                            notification
+                          "
+                        >
+                          {{post_category}}
+                        </span>
+                        <span class="is-size-4 has-text-weight-bold pl-2"
+                          >{{post_title}}</span
+                        >
+                      </div>
+
+                      <div class="has-text-grey">
+                        Posted on {{post_time_asked}} by {{post_name}}
+                      </div>
+                    </a>
+                  </div>
                 </div>
 
-                <div class="has-text-grey">
-                  Posted on {{post_time_asked}} by {{post_name}}
-                </div>
                 <hr />
                 <div>
                   <span
@@ -252,18 +251,19 @@
                 <div class="column">
                   <div class="columns">
                     <div class="column is-1">
-                      <img width="100" :src="r.thumbnail" />
+                      <img width="100" :src="r.download_url" />
                     </div>
                     <div class="column">
-                      <div class="is-size-4">
-                        <b>{{r.name}}</b>
-                      </div>
-                      <div class="has-text-grey pb-2">
-                        Answered on {{r.time_answered}}
-                      </div>
+                      <a v-bind:href="url +'/'+ r.user_id">
+                        <div class="is-size-4">
+                          <b>{{r.name}}</b>
+                        </div>
+                        <div class="has-text-grey pb-2">
+                          Answered on {{r.time_answered}}
+                        </div>
+                      </a>
                     </div>
                   </div>
-
                   <hr />
                   <div>
                     <span>
@@ -340,7 +340,10 @@
   let get_answer_rating_url = "[[=XML(get_answer_rating_url)]]";
   let get_answer_likers_url = "[[=XML(get_answer_likers_url)]]";
   let get_answer_thumbnail_url = "[[=XML(get_answer_thumbnail_url)]]";
+  let post_pictures_url = "[[=XML(post_pictures_url)]]";
   let post_id = "[[=post.id]]";
+  let post_user_id = "[[=post_user_id]]";
+  let url = "[[=URL('user')]]";
 </script>
 <script src="js/post.js"></script>
 [[end]]

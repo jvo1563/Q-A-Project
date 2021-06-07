@@ -13,7 +13,7 @@
       <div class="column has-background-primary is-2">
         <div class="pl-4 pt-5">
           <div class="tile level-item">
-            <h3 class="title is-3">AskAnything</h3>
+            <h3 class="title is-3 has-text-black">AskAnything</h3>
           </div>
           <hr />
           <div>
@@ -22,7 +22,7 @@
                 <span class="icon">
                   <i class="fa fa-home fa-2x"></i>
                 </span>
-                <span class="has-text-white pl-4">Home</span>
+                <span class="pl-4 has-text-black-bis">Home</span>
               </span>
             </a>
           </div>
@@ -33,7 +33,7 @@
                 <span class="icon">
                   <i class="icon fa fa-plus-square fa-2x"></i>
                 </span>
-                <span class="has-text-white pl-4">Ask a question!</span>
+                <span class="pl-4 has-text-black-bis">Ask a question! </span>
               </span>
             </a>
           </div>
@@ -44,29 +44,21 @@
                 <span class="icon">
                   <i class="fa fa-smile-o fa-2x"></i>
                 </span>
-                <span class="has-text-white pl-4">My Profile</span>
+                <span class="pl-4 has-text-black-bis">My Profile</span>
               </span>
-            </a>
-          </div>
-
-          <div class="pt-5 control block">
-            <input
-              class="has-background-grey-light"
-              type="text"
-              placeholder="Search.."
-            />
-            <a class="button is-primary">
-              <span>Search</span>
             </a>
           </div>
         </div>
       </div>
 
       <div class="column">
+        <section class="hero is-primary">
+          <img width="1700" src="banner.jpg" />
+        </section>
         <div class="tile is-vertical pr-5 pt-6">
           <h4 class="title is-4">Home Feed</h4>
           <div v-for="r in rows.slice().reverse()" class="block">
-            <div class="box has-background-grey-lighter py-3">
+            <div class="box py-3">
               <div class="columns">
                 <div class="column is-1">
                   <div class="level-item">
@@ -119,13 +111,12 @@
                     <span>
                       <a
                         class="is-size-4 has-text-weight-bold pl-2"
-                        v-bind:href="'/qa/post/'+ r.id"
+                        v-bind:href="post_url + '/'+ r.id"
                       >
                         {{r.title}}
                       </a></span
                     >
                   </div>
-
                   <div class="has-text-grey">
                     Posted on {{r.time_asked}} by {{r.name}}
                   </div>
@@ -149,6 +140,8 @@
   let get_rating_url = "[[=XML(get_rating_url)]]";
   let set_rating_url = "[[=XML(set_rating_url)]]";
   let get_likers_url = "[[=XML(get_likers_url)]]";
+  let post_url = "[[=URL('post')]]";
+  let user_url = "[[=URL('user')]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
