@@ -22,8 +22,6 @@ Then run the command below
 ./py4web.py run apps
 ```
 
-The optional -u argument changes the cache replacement policy from FIFO to LRU
-
 ## Description
 
 This this a py4web app that implements a question and answer website where people can ask questions of any kind and receive answers. 
